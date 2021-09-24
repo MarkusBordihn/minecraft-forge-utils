@@ -25,7 +25,8 @@ const possibleNamespacePrefix =
     process.env.LC_ALL ||
     process.env.LC_MESSAGES ||
     process.env.LANG ||
-    process.env.LANGUAGE
+    process.env.LANGUAGE ||
+    ''
   ).substring(0, 2) || 'net';
 
 exports.newProjectPrompt = new Select({
