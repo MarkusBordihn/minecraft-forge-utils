@@ -1,0 +1,36 @@
+{  
+    "editor.tabSize": 2,
+    "editor.rulers": [80],
+    "cSpell.words": [
+        "attachables",
+        "bbwe",
+        "Bordihn",
+        "camelcase",
+        "chestplate",
+        "chestplates",
+        "compat",
+        "enchantable",
+        "execa",
+        "fileoverview",
+        "gradlew",
+        "LOCALAPPDATA",
+        "Markus",
+        "markusbordihn",
+        "Minecraft",
+        "modname",
+        "mojang",
+        "mynamespace",
+        "nodir",
+        "universalify",
+        "uuidv",
+        "wekyb",
+        "wrappy"
+    ],
+    "cSpell.ignorePaths" : [
+        ".prettierrc",
+        "*.yml",
+        ".vscode",
+        "node_modules",
+        "package-lock.json"
+      ],
+}

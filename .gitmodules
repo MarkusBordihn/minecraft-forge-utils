@@ -1,0 +1,5 @@
+[submodule "third_party/minecraft-forge-template-1.16.5"]
+	path = third_party/minecraft-forge-template-1.16.5
+	url = https://github.com/MarkusBordihn/minecraft-forge-template.git
+	branch = 1.16.5
+	ignore = dirty
