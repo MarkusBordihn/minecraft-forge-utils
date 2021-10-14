@@ -1,12 +1,10 @@
 {
   "name": "minecraft-forge-utils",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Collection of useful Minecraft Forge development related utilities.",
   "preferGlobal": true,
   "main": "index.js",
-  "bin": {
-    "minecraft-forge-utils": "cli.js"
-  },
+  "bin": "cli.js",
   "keywords": [
     "Minecraft",
     "Forge",
@@ -36,13 +34,13 @@
     "enquirer": "^2.3.6",
     "execa": "^5.1.1",
     "fs-extra": "^10.0.0",
-    "glob": "^7.1.7",
-    "is-windows": "^1.0.2",
+    "glob": "^7.2.0",
+    "minecraft-utils-shared": "file:../minecraft-utils-shared",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.31.1",
-    "@typescript-eslint/parser": "^4.31.1",
+    "@typescript-eslint/eslint-plugin": "^4.32.0",
+    "@typescript-eslint/parser": "^4.32.0",
     "eslint": "^7.32.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.3.0",
@@ -52,10 +50,11 @@
     "typescript": "^4.4.3"
   },
   "scripts": {
+    "cli": "npm exec ./",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "npm run lint",
-    "sync": "git pull && git submodule init && git submodule update && npm install & npm update && npm prune & npm audit fix",
-    "upgrade": "npm-upgrade & npm install & npm update & npm prune & npm audit fix & npm run test"
+    "test": "npm exec ./ && npm exec ./ debug && npm exec ./ version",
+    "sync": "git pull && git submodule init && git submodule update && npm install && npm update && npm prune && npm audit fix",
+    "upgrade": "npm-upgrade && npm install && npm update && npm prune && npm audit fix && npm run test"
   }
 }

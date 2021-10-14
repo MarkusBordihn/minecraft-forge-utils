@@ -1,20 +1,6 @@
 /**
  * @fileoverview Minecraft Forge Utils - Config lib
- *
- * @license Copyright 2021 Markus Bordihn
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
+ * @license Apache-2.0
  * @author Markus@Bordihn.de (Markus Bordihn)
  */
 
@@ -22,9 +8,11 @@ const fs = require('fs');
 const path = require('path');
 
 const defaultPath = require('../utils/path.js');
-const files = require('./files.js');
+const { fileUtils } = require('minecraft-utils-shared');
 
 const extension = '.mfu';
+const configPath = '.minecraft-forge-utils';
+const configFile = 'project.mfu';
 
 /**
  * @param {String} file
@@ -52,8 +40,15 @@ const loadConfig = (file) => {
  */
 const loadDefaultConfig = (name) => {
   return loadConfig(
-    path.join(defaultPath.configPath, files.normalizeFileName(name))
+    path.join(defaultPath.configPath, fileUtils.normalizeFileName(name))
   );
+};
+
+/**
+ * @return {Object}
+ */
+const loadProjectConfig = () => {
+  return loadConfig(defaultPath.configFile);
 };
 
 /**
@@ -68,7 +63,7 @@ const saveConfig = (file, options = {}) => {
 
   if (fs.existsSync(file)) {
     console.log('Overwrite configuration for', options.name, 'in file', file);
-    files.createBackupFile(file);
+    fileUtils.createBackupFile(file);
   } else {
     console.log('Storing configuration for', options.name, 'in file', file);
   }
@@ -85,14 +80,26 @@ const saveConfig = (file, options = {}) => {
  * @param {Object} options
  */
 const saveDefaultConfig = (name, options = {}) => {
-  files.createFolderIfNotExists(defaultPath.configPath);
+  fileUtils.createFolderIfNotExists(defaultPath.configPath);
   saveConfig(
-    path.join(defaultPath.configPath, files.normalizeFileName(name)),
+    path.join(defaultPath.configPath, fileUtils.normalizeFileName(name)),
     options
   );
 };
 
+/**
+ * @param {Object} options
+ */
+const saveProjectConfig = (options = {}) => {
+  fileUtils.createFolderIfNotExists(defaultPath.configPath);
+  saveConfig(defaultPath.configFile, options);
+};
+
+exports.configFile = configFile;
+exports.configPath = configPath;
 exports.loadConfig = loadConfig;
 exports.loadDefaultConfig = loadDefaultConfig;
+exports.loadProjectConfig = loadProjectConfig;
 exports.saveConfig = saveConfig;
 exports.saveDefaultConfig = saveDefaultConfig;
+exports.saveProjectConfig = saveProjectConfig;

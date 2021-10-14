@@ -1,20 +1,6 @@
 /**
  * @fileoverview Minecraft Forge Utils - Project lib
- *
- * @license Copyright 2021 Markus Bordihn
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
+ * @license Apache-2.0
  * @author Markus@Bordihn.de (Markus Bordihn)
  */
 
@@ -23,9 +9,33 @@ const path = require('path');
 
 const configuration = require('./configuration.js');
 const defaultPath = require('./path.js');
-const files = require('./files.js');
+const { fileUtils } = require('minecraft-utils-shared');
 
-const newProjectTemplate = (name, options = {}) => {
+const defaultOptions = {
+  author:
+    process.env.USER || require('os').userInfo().username || 'Author Name',
+  className: 'NewModClassName',
+  classPath: path.join(
+    defaultPath.workingPath,
+    ...'src/main/java/net/example'.split('/')
+  ),
+  assetsPath: path.join(
+    defaultPath.workingPath,
+    ...'src/main/resources/assets/new_mod'.split('/')
+  ),
+  description: 'This is the description for a new Forge mod',
+  id: 'new_mod',
+  license: 'MIT',
+  name:
+    process.env.npm_package_config_project_name ||
+    process.env.npm_package_name ||
+    'New Project',
+  minEngineVersion: '1.16.5',
+  namespace: 'net.example',
+  vendorName: 'vendorname',
+};
+
+const newProjectTemplate = (name, options = defaultOptions) => {
   console.log('Creating new project template for', name);
 
   // Autocomplete Options if needed
@@ -75,8 +85,8 @@ const newProjectTemplate = (name, options = {}) => {
   // Replace Template placeholder
   replaceProjectTemplatePlaceholder(defaultPath.workingPath, options);
 
-  // Store configuration
-  configuration.saveDefaultConfig(`project.mfu`, options);
+  // Store project configuration
+  configuration.saveProjectConfig(options);
 };
 
 const runGradleSetup = () => {
@@ -91,53 +101,53 @@ const runGradleSetup = () => {
 
 const copyProjectTemplateFiles = (template, target) => {
   // Copy VS Code relevant files
-  files.copyFolderIfNotExists(
+  fileUtils.copyFolderIfNotExists(
     path.join(template, '.vscode'),
     path.join(target, '.vscode')
   );
-  files.copyFileIfNotExists(
+  fileUtils.copyFileIfNotExists(
     path.join(template, 'java-google-style.xml'),
     path.join(target, 'java-google-style.xml')
   );
 
   // Copy git / Github relevant files
-  files.copyFolderIfNotExists(
+  fileUtils.copyFolderIfNotExists(
     path.join(template, '.github'),
     path.join(target, '.github')
   );
-  files.copyFileIfNotExists(
+  fileUtils.copyFileIfNotExists(
     path.join(template, '.gitattributes'),
     path.join(target, '.gitattributes')
   );
-  files.copyFileIfNotExists(
+  fileUtils.copyFileIfNotExists(
     path.join(template, '.gitignore'),
     path.join(target, '.gitignore')
   );
 
   // Copy Gradle relevant files
-  files.copyFolderIfNotExists(
+  fileUtils.copyFolderIfNotExists(
     path.join(template, 'build.gradle'),
     path.join(target, 'build.gradle')
   );
-  files.copyFolderIfNotExists(
+  fileUtils.copyFolderIfNotExists(
     path.join(template, 'gradle'),
     path.join(target, 'gradle')
   );
-  files.copyFileIfNotExists(
+  fileUtils.copyFileIfNotExists(
     path.join(template, 'gradle.properties'),
     path.join(target, 'gradle.properties')
   );
-  files.copyFileIfNotExists(
+  fileUtils.copyFileIfNotExists(
     path.join(template, 'gradlew'),
     path.join(target, 'gradlew')
   );
-  files.copyFileIfNotExists(
+  fileUtils.copyFileIfNotExists(
     path.join(template, 'gradlew.bat'),
     path.join(target, 'gradlew.bat')
   );
 
   // Copy Source files
-  files.copyFolderIfNotExists(
+  fileUtils.copyFolderIfNotExists(
     path.join(template, 'src'),
     path.join(target, 'src')
   );
@@ -145,7 +155,7 @@ const copyProjectTemplateFiles = (template, target) => {
 
 const prepareProjectTemplate = (target, options) => {
   // Create mod folder
-  files.createFolderIfNotExists(path.join(options.classPath));
+  fileUtils.createFolderIfNotExists(path.join(options.classPath));
 
   // Rename template main class files
   const templateDir = path.join(
@@ -155,43 +165,47 @@ const prepareProjectTemplate = (target, options) => {
     'java',
     '__mod_namespace__'
   );
-  files.renameFileIfExists(
+  fileUtils.renameFileIfExists(
     path.join(templateDir, '__mod_class_name__.java'),
     path.join(templateDir, `${options.className}.java`)
   );
-  files.renameFileIfExists(templateDir, options.classPath, true);
+  fileUtils.renameFileIfExists(templateDir, options.classPath, true);
 
   // Create assets folder
-  files.createFolderIfNotExists(options.assetsPath);
+  fileUtils.createFolderIfNotExists(options.assetsPath);
 };
 
 const replaceProjectTemplatePlaceholder = (target, options) => {
   // build.gradle
   const buildFile = path.join(target, 'build.gradle');
-  files.setPlaceholder(buildFile, 'Mod Id', options.id);
+  fileUtils.setPlaceholder(buildFile, 'Mod Id', options.id);
 
   // gradle.properties files
   const gradleFile = path.join(target, 'gradle.properties');
-  files.setPlaceholder(gradleFile, 'Author', options.author);
-  files.setPlaceholder(gradleFile, 'Mod Namespace', options.namespace);
-  files.setPlaceholder(gradleFile, 'Mod Id', options.id);
-  files.setPlaceholder(gradleFile, 'Mod Name', options.name);
-  files.setPlaceholder(gradleFile, 'Vendor Name', options.vendorName);
+  fileUtils.setPlaceholder(gradleFile, 'Author', options.author);
+  fileUtils.setPlaceholder(gradleFile, 'Mod Namespace', options.namespace);
+  fileUtils.setPlaceholder(gradleFile, 'Mod Id', options.id);
+  fileUtils.setPlaceholder(gradleFile, 'Mod Name', options.name);
+  fileUtils.setPlaceholder(gradleFile, 'Vendor Name', options.vendorName);
 
   // Resources files
   const resourceFiles = path.join(target, 'src', 'main', 'resources', '**');
-  files.setPlaceholder(resourceFiles, 'Author', options.author);
-  files.setPlaceholder(resourceFiles, 'Mod Description', options.description);
-  files.setPlaceholder(resourceFiles, 'Mod Id', options.id);
-  files.setPlaceholder(resourceFiles, 'Mod License', options.license);
-  files.setPlaceholder(resourceFiles, 'Mod Name', options.name);
+  fileUtils.setPlaceholder(resourceFiles, 'Author', options.author);
+  fileUtils.setPlaceholder(
+    resourceFiles,
+    'Mod Description',
+    options.description
+  );
+  fileUtils.setPlaceholder(resourceFiles, 'Mod Id', options.id);
+  fileUtils.setPlaceholder(resourceFiles, 'Mod License', options.license);
+  fileUtils.setPlaceholder(resourceFiles, 'Mod Name', options.name);
 
   // Source files
   const sourceFiles = path.join(target, 'src', 'main', 'java', '**', '*.java');
-  files.setPlaceholder(sourceFiles, 'Mod ClassName', options.className);
-  files.setPlaceholder(sourceFiles, 'Mod Id', options.id);
-  files.setPlaceholder(sourceFiles, 'Mod Name', options.name);
-  files.setPlaceholder(sourceFiles, 'Mod Namespace', options.namespace);
+  fileUtils.setPlaceholder(sourceFiles, 'Mod ClassName', options.className);
+  fileUtils.setPlaceholder(sourceFiles, 'Mod Id', options.id);
+  fileUtils.setPlaceholder(sourceFiles, 'Mod Name', options.name);
+  fileUtils.setPlaceholder(sourceFiles, 'Mod Namespace', options.namespace);
 };
 
 const getProjectTemplate = (version) => {
@@ -203,6 +217,7 @@ const getProjectTemplate = (version) => {
   return '';
 };
 
+exports.defaultOptions = defaultOptions;
 exports.getProjectTemplate = getProjectTemplate;
 exports.newProjectTemplate = newProjectTemplate;
 exports.runGradleSetup = runGradleSetup;
