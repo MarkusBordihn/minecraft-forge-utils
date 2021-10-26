@@ -3,3 +3,7 @@
 	url = https://github.com/MarkusBordihn/minecraft-forge-template.git
 	branch = 1.16.5
 	ignore = dirty
+[submodule "third_party/minecraft-forge-template-1.17.1"]
+	path = third_party/minecraft-forge-template-1.17.1
+	url = https://github.com/MarkusBordihn/minecraft-forge-template
+	branch = 1.17.1
