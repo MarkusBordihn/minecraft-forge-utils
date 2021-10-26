@@ -4,99 +4,74 @@
  * @author Markus@Bordihn.de (Markus Bordihn)
  */
 
-const execa = require('execa');
+const chalk = require('chalk');
+const fs = require('fs');
 const path = require('path');
+const {
+  configurationUtils,
+  defaultConfig,
+  defaultPath,
+  fileUtils,
+} = require('minecraft-utils-shared');
 
-const configuration = require('./configuration.js');
-const defaultPath = require('./path.js');
-const { fileUtils } = require('minecraft-utils-shared');
+const projectTemplatePath = path.join(
+  path.resolve(__dirname, '..'),
+  'third_party'
+);
 
-const defaultOptions = {
-  author:
-    process.env.USER || require('os').userInfo().username || 'Author Name',
-  className: 'NewModClassName',
-  classPath: path.join(
-    defaultPath.workingPath,
-    ...'src/main/java/net/example'.split('/')
-  ),
-  assetsPath: path.join(
-    defaultPath.workingPath,
-    ...'src/main/resources/assets/new_mod'.split('/')
-  ),
-  description: 'This is the description for a new Forge mod',
-  id: 'new_mod',
-  license: 'MIT',
-  name:
-    process.env.npm_package_config_project_name ||
-    process.env.npm_package_name ||
-    'New Project',
-  minEngineVersion: '1.16.5',
-  namespace: 'net.example',
-  vendorName: 'vendorname',
-};
-
-const newProjectTemplate = (name, options = defaultOptions) => {
+const newProjectTemplate = (
+  name,
+  projectOptions = defaultConfig.project.config
+) => {
   console.log('Creating new project template for', name);
 
-  // Autocomplete Options if needed
-  if (!options.name) {
-    options.name = name;
-  }
-  if (!options.classPath) {
-    options.classPath = path.join(
-      defaultPath.workingPath,
-      'src',
-      'main',
-      'java',
-      ...options.namespace.split('.')
-    );
-  }
-  if (!options.assetsPath) {
-    options.assetsPath = path.join(
-      defaultPath.workingPath,
-      'src',
-      'main',
-      'resources',
-      'assets',
-      options.id
-    );
-  }
+  // Normalized options
+  const options = defaultConfig.project.normalize(
+    projectOptions,
+    name,
+    defaultConfig.project.gameType.FORGE
+  );
 
   // Prepare template files based on the minEngineVersion, if needed.
-  if (!options.templatePath) {
-    options.templatePath = path.join(
-      defaultPath.thirdPartyPath,
+  if (!options.forge.templatePath) {
+    options.forge.templatePath = path.join(
+      projectTemplatePath,
       getProjectTemplate(options.minEngineVersion)
     );
+    options.forge.templatesPath = path.join(
+      options.forge.templatePath,
+      'templates'
+    );
   }
-  if (!options.templatePath) {
+  if (!options.forge.templatePath) {
     console.error('Unsupported version', options.minEngineVersion, '!');
     return;
+  } else if (!fs.existsSync(options.forge.templatePath)) {
+    console.error(
+      chalk.red('Template Path', options.forge.templatePath, 'does not exists!')
+    );
+    return;
   }
-  console.log('Using template', options.templatePath, 'for project ...');
+  console.log(
+    'Using template',
+    options.forge.templatePath,
+    'for project',
+    defaultPath.project.path
+  );
+
   copyProjectTemplateFiles(
-    path.join(options.templatePath),
-    defaultPath.workingPath
+    path.join(options.forge.templatePath),
+    defaultPath.project.path
   );
 
   // Prepare Source Code
-  prepareProjectTemplate(defaultPath.workingPath, options);
+  prepareProjectTemplate(defaultPath.project.path, options);
 
   // Replace Template placeholder
-  replaceProjectTemplatePlaceholder(defaultPath.workingPath, options);
+  replaceProjectTemplatePlaceholder(defaultPath.project.path, options);
 
   // Store project configuration
-  configuration.saveProjectConfig(options);
-};
-
-const runGradleSetup = () => {
-  console.info('Running gradle setup, please wait ...');
-  try {
-    execa('gradlew').stdout.pipe(process.stdout);
-  } catch (error) {
-    console.error(('Unable to run ./gradlew:', error));
-    return;
-  }
+  configurationUtils.saveProjectConfig(options);
 };
 
 const copyProjectTemplateFiles = (template, target) => {
@@ -155,11 +130,11 @@ const copyProjectTemplateFiles = (template, target) => {
 
 const prepareProjectTemplate = (target, options) => {
   // Create mod folder
-  fileUtils.createFolderIfNotExists(path.join(options.classPath));
+  fileUtils.createFolderIfNotExists(options.forge.classPath);
 
   // Rename template main class files
   const templateDir = path.join(
-    defaultPath.workingPath,
+    defaultPath.project.path,
     'src',
     'main',
     'java',
@@ -167,57 +142,69 @@ const prepareProjectTemplate = (target, options) => {
   );
   fileUtils.renameFileIfExists(
     path.join(templateDir, '__mod_class_name__.java'),
-    path.join(templateDir, `${options.className}.java`)
+    path.join(templateDir, `${options.forge.className}.java`)
   );
-  fileUtils.renameFileIfExists(templateDir, options.classPath, true);
+  fileUtils.renameFileIfExists(templateDir, options.forge.classPath, true);
 
   // Create assets folder
-  fileUtils.createFolderIfNotExists(options.assetsPath);
+  fileUtils.createFolderIfNotExists(options.forge.assetsPath);
 };
 
 const replaceProjectTemplatePlaceholder = (target, options) => {
   // build.gradle
   const buildFile = path.join(target, 'build.gradle');
-  fileUtils.setPlaceholder(buildFile, 'Mod Id', options.id);
+  fileUtils.setPlaceholder(buildFile, 'ModId', options.id);
 
   // gradle.properties files
   const gradleFile = path.join(target, 'gradle.properties');
   fileUtils.setPlaceholder(gradleFile, 'Author', options.author);
-  fileUtils.setPlaceholder(gradleFile, 'Mod Namespace', options.namespace);
-  fileUtils.setPlaceholder(gradleFile, 'Mod Id', options.id);
-  fileUtils.setPlaceholder(gradleFile, 'Mod Name', options.name);
-  fileUtils.setPlaceholder(gradleFile, 'Vendor Name', options.vendorName);
+  fileUtils.setPlaceholder(gradleFile, 'ModNamespace', options.forge.namespace);
+  fileUtils.setPlaceholder(gradleFile, 'ModId', options.id);
+  fileUtils.setPlaceholder(gradleFile, 'ModName', options.name);
+  fileUtils.setPlaceholder(gradleFile, 'VendorName', options.forge.vendorName);
 
   // Resources files
   const resourceFiles = path.join(target, 'src', 'main', 'resources', '**');
   fileUtils.setPlaceholder(resourceFiles, 'Author', options.author);
   fileUtils.setPlaceholder(
     resourceFiles,
-    'Mod Description',
-    options.description
+    'ModDescription',
+    options.forge.description
   );
-  fileUtils.setPlaceholder(resourceFiles, 'Mod Id', options.id);
-  fileUtils.setPlaceholder(resourceFiles, 'Mod License', options.license);
-  fileUtils.setPlaceholder(resourceFiles, 'Mod Name', options.name);
+  fileUtils.setPlaceholder(resourceFiles, 'ModId', options.id);
+  fileUtils.setPlaceholder(resourceFiles, 'ModLicense', options.license);
+  fileUtils.setPlaceholder(resourceFiles, 'ModName', options.name);
 
   // Source files
   const sourceFiles = path.join(target, 'src', 'main', 'java', '**', '*.java');
-  fileUtils.setPlaceholder(sourceFiles, 'Mod ClassName', options.className);
-  fileUtils.setPlaceholder(sourceFiles, 'Mod Id', options.id);
-  fileUtils.setPlaceholder(sourceFiles, 'Mod Name', options.name);
-  fileUtils.setPlaceholder(sourceFiles, 'Mod Namespace', options.namespace);
+  fileUtils.setPlaceholder(
+    sourceFiles,
+    'ModClassName',
+    options.forge.className
+  );
+  fileUtils.setPlaceholder(sourceFiles, 'ModId', options.id);
+  fileUtils.setPlaceholder(sourceFiles, 'ModName', options.name);
+  fileUtils.setPlaceholder(
+    sourceFiles,
+    'packageNamespace',
+    options.forge.namespace
+  );
 };
 
+/**
+ * @param {string} version
+ * @returns {string}
+ */
 const getProjectTemplate = (version) => {
   const prefix = 'minecraft-forge-template-';
   switch (version) {
     case '1.16.5':
-      return `${prefix}1.16.5`;
+    case '1.17.1':
+      return `${prefix}${version}`;
+    default:
+      return '';
   }
-  return '';
 };
 
-exports.defaultOptions = defaultOptions;
 exports.getProjectTemplate = getProjectTemplate;
 exports.newProjectTemplate = newProjectTemplate;
-exports.runGradleSetup = runGradleSetup;

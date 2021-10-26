@@ -5,34 +5,14 @@
  */
 
 const { Form, Select } = require('enquirer');
-const { defaultConfig, translationUtils } = require('minecraft-utils-shared');
+const {
+  defaultConfig,
+  translationUtils,
+  normalizeHelper,
+} = require('minecraft-utils-shared');
 
 const possibleNamespacePrefix =
   translationUtils.language.substring(0, 2).toLocaleLowerCase() || 'net';
-
-/**
- * @param {String} name
- * @return {String}
- */
-const normalizeModId = (name = '') => {
-  return name
-    .replace(/\s+/g, '')
-    .replace(/[_-]+/g, '')
-    .replace(/[^a-zA-Z0-9_-]/g, '')
-    .toLowerCase();
-};
-
-/**
- * @param {String} name
- * @return {String}
- */
-const normalizeClassName = (name = '') => {
-  return name
-    .replace(/(^\w|\s\w)/g, (firstChar) => firstChar.toUpperCase())
-    .replace(/\s+/g, '')
-    .replace(/[_-]+/g, '')
-    .replace(/[^a-zA-Z0-9_-]/g, '');
-};
 
 exports.projectTypePrompt = new Form({
   name: 'projectType',
@@ -55,13 +35,12 @@ exports.newProjectPrompt = new Select({
   message: 'Please select the Minecraft version for your project',
   choices: [
     {
-      message: '1.16.5',
-      value: '1.16.5',
+      message: '1.17.1',
+      value: '1.17.1',
     },
     {
-      message: '1.17',
-      value: '1.17',
-      disabled: true,
+      message: '1.16.5',
+      value: '1.16.5',
     },
   ],
 });
@@ -82,17 +61,17 @@ exports.newProject = new Form({
     },
     {
       name: 'id',
-      message: 'Mod id',
-      initial: 'my_first_mod',
+      message: 'Project Id',
+      initial: defaultConfig.project.config.id,
       onChoice(state, choice) {
         const { name } = this.values;
-        choice.initial = `${normalizeModId(name)}`;
+        choice.initial = `${normalizeHelper.normalizeModId(name)}`;
       },
       validate(value) {
-        return value == normalizeModId(value);
+        return value == normalizeHelper.normalizeModId(value);
       },
       result(value) {
-        return normalizeModId(value);
+        return normalizeHelper.normalizeModId(value);
       },
     },
     {
@@ -101,49 +80,51 @@ exports.newProject = new Form({
       initial: defaultConfig.project.config.license,
     },
     {
-      name: 'description',
+      name: 'forge.description',
       message: 'description',
-      initial: defaultConfig.project.config.description,
+      initial: defaultConfig.project.config.forge.description,
     },
     {
-      name: 'className',
+      name: 'forge.className',
       message: 'Class Name',
-      initial: defaultConfig.project.config.className,
+      initial: defaultConfig.project.config.forge.className,
       onChoice(state, choice) {
         const { name } = this.values;
-        choice.initial = `${normalizeClassName(name)}`;
+        choice.initial = `${normalizeHelper.normalizeClassName(name)}`;
       },
       validate(value) {
-        return value == normalizeClassName(value);
+        return value == normalizeHelper.normalizeClassName(value);
       },
       result(value) {
-        return normalizeClassName(value);
+        return normalizeHelper.normalizeClassName(value);
       },
     },
     {
-      name: 'namespace',
+      name: 'forge.namespace',
       message: 'Class Namespace',
-      initial: defaultConfig.project.config.namespace,
+      initial: defaultConfig.project.config.forge.namespace,
       onChoice(state, choice) {
         const { author, id } = this.values;
-        choice.initial = `${possibleNamespacePrefix}.${normalizeModId(
+        choice.initial = `${normalizeHelper.normalizeClassNameSpace(
+          possibleNamespacePrefix
+        )}.${normalizeHelper.normalizeClassNameSpace(
           author
-        )}.${id}`;
+        )}.${normalizeHelper.normalizeClassNameSpace(id || 'new_project')}`;
       },
     },
     {
-      name: 'vendorName',
+      name: 'forge.vendorName',
       message: 'Vendor Name',
-      initial: defaultConfig.project.config.vendorName,
+      initial: defaultConfig.project.config.forge.vendorName,
       onChoice(state, choice) {
         const { author } = this.values;
-        choice.initial = `${normalizeModId(author)}`;
+        choice.initial = `${normalizeHelper.normalizeVendorName(author)}`;
       },
       validate(value) {
-        return value == normalizeModId(value);
+        return value == normalizeHelper.normalizeVendorName(value);
       },
       result(value) {
-        return normalizeModId(value);
+        return normalizeHelper.normalizeVendorName(value);
       },
     },
   ],

@@ -8,14 +8,19 @@ const chalk = require('chalk');
 const fs = require('fs');
 const { spawnSync } = require('child_process');
 
-const defaultPath = require('../utils/path.js');
+const { defaultPath } = require('minecraft-utils-shared');
 
 /**
  * @return {boolean}
  */
 exports.errorNonJavaPath = () => {
-  if (!fs.existsSync(defaultPath.javaPath)) {
-    console.error(chalk.red('Unable to find src/main/java folder!'));
+  if (!fs.existsSync(defaultPath.forge.javaPath)) {
+    console.error(
+      chalk.red(
+        'Unable to find src/main/java under',
+        defaultPath.forge.javaPath
+      )
+    );
     console.info(
       '\nTip: Use "npx minecraft-forge-utils new" to start a new project.\n'
     );
@@ -28,8 +33,13 @@ exports.errorNonJavaPath = () => {
  * @return {boolean}
  */
 exports.errorExistingJavaPath = () => {
-  if (fs.existsSync(defaultPath.javaPath)) {
-    console.error(chalk.red('Found existing src/main/java folder!'));
+  if (fs.existsSync(defaultPath.forge.javaPath)) {
+    console.error(
+      chalk.red(
+        'Found existing src/main/java folder under',
+        defaultPath.forge.javaPath
+      )
+    );
     return true;
   }
   return false;
@@ -39,11 +49,16 @@ exports.errorExistingJavaPath = () => {
  * @return {boolean}
  */
 exports.errorNoJavaJDK = () => {
-  const versionString = spawnSync('java', ['-version']).stderr.toString() || '';
-  if (!versionString.toLocaleLowerCase().includes('jdk ')) {
-    if (versionString) {
+  const javaVersion = spawnSync('java', ['-version']).stderr.toString() || '';
+  const javaJDKCheck =
+    spawnSync('javac', ['-version'], { shell: true }).stdout.toString() || '';
+  if (!javaJDKCheck) {
+    if (javaVersion && !javaVersion.toLocaleLowerCase().includes('jdk ')) {
+      const javaVersionString = javaVersion.split('\n')[0].trim();
       console.error(
-        chalk.red('Found Java JRE installation instead of Java JDK!')
+        chalk.red(
+          `Found Java JRE installation ${javaVersionString} instead of Java JDK!`
+        )
       );
       console.info(
         '\nTip: Remove Java JRE and install Java JDK like https://www.oracle.com/java/technologies/downloads/.\n'
@@ -56,6 +71,9 @@ exports.errorNoJavaJDK = () => {
     }
     return true;
   }
+  if (javaJDKCheck.includes(' 17.')) {
+    console.warn(chalk.yellow('Found unsupported Java Version >= 17.x !'));
+  }
   return false;
 };
 
@@ -64,13 +82,13 @@ exports.errorNoJavaJDK = () => {
  */
 exports.warnNonProjectConfig = () => {
   if (
-    !fs.existsSync(defaultPath.configPath) ||
-    !fs.existsSync(defaultPath.configFile)
+    !fs.existsSync(defaultPath.project.config) ||
+    !fs.existsSync(defaultPath.project.path)
   ) {
     console.warn(
       chalk.yellow(
         'Unable to find any project configuration file under',
-        defaultPath.configPath,
+        defaultPath.config.path,
         '!'
       )
     );

@@ -5,8 +5,8 @@
  */
 
 const chalk = require('chalk');
+const { configurationUtils } = require('minecraft-utils-shared');
 
-const configuration = require('../utils/configuration.js');
 const items = require('../utils/items.js');
 const preChecks = require('../utils/preChecks.js');
 const prompts = require('./itemPrompts.js');
@@ -23,7 +23,7 @@ const add = (name, options = {}) => {
 
   // Load options from config file for automated creation and tests.
   if (name && name.endsWith('.mfu')) {
-    options = configuration.loadConfig(name);
+    options = configurationUtils.loadConfig(name);
     name = options.name;
   }
 
@@ -76,6 +76,12 @@ const add = (name, options = {}) => {
               .then((answers) => add(answers.name, answers))
               .catch(console.error);
             break;
+          case 'simple':
+            prompts.newSimpleItem
+              .run()
+              .then((answers) => add(answers.name, answers))
+              .catch(console.error);
+            break;
           case 'custom':
           default:
             prompts.newCustomItem
@@ -88,26 +94,6 @@ const add = (name, options = {}) => {
       .catch(console.error);
     return;
   }
-
-  // Adding default options, if missing
-  if (!options.namespace) {
-    options.namespace =
-      process.env.npm_package_config_project_namespace || 'my_item';
-  }
-  if (!options.format_version) {
-    options.format_version = '1.16.5';
-  }
-
-  // Only create new item if we don't found any existing item.
-  if (items.existingItem(name, options.namespace)) {
-    console.error(
-      chalk.red(`Item ${items.getId(name, options.namespace)} already exists!`)
-    );
-    return;
-  }
-
-  // Warn user if this required an experimental flag
-  preChecks.warnExperimentalVersion(options.format_version);
 
   items.createItem(name, options);
 

@@ -1,78 +1,31 @@
 /**
- * @fileoverview Minecraft Forge Utils - Item command prompts
+ * @file Minecraft Forge Utils - Item command prompts
  * @license Apache-2.0
  * @author Markus@Bordihn.de (Markus Bordihn)
  */
 
-const fs = require('fs');
-const path = require('path');
 const { Form, Select } = require('enquirer');
+const {
+  configurationUtils,
+  defaultConfig,
+  enquirerHelper,
+  normalizeHelper,
+} = require('minecraft-utils-shared');
 
-const defaultPath = require('../utils/path.js');
-const enquirerHelper = require('../utils/enquirer');
-const items = require('../utils/items.js');
-
-const stableVersion = '1.16.1';
-const experimentalVersion = '1.16.100';
-
-/**
- * @param {String} type
- * @return {String}
- */
-const getItemTypeIcon = (type) => {
-  switch (type) {
-    case 'armor':
-      return '🛡️';
-    case 'boots':
-      return '🥾';
-    case 'blockPlacer':
-      return '🔲';
-    case 'chestplate':
-      return '👕';
-    case 'digger':
-      return '⛏️';
-    case 'dyePowder':
-      return '✨';
-    case 'entityPlacer':
-      return '🕷️';
-    case 'food':
-      return '🍎';
-    case 'fuel':
-      return '🛢️';
-    case 'projectile':
-      return '🏹';
-    case 'throwable':
-      return '❄️';
-    case 'helmet':
-      return '⛑';
-    case 'weapon':
-      return '⚔️';
-    case 'leggings':
-    case 'wearable':
-      return '👖';
-    case 'custom':
-    default:
-      return '✏️';
-  }
-};
+const projectConfig = configurationUtils.loadProjectConfig();
 
 /**
  * @param {String} type
  * @return {String}
  */
 const getItemTypeIconForSelection = (type) => {
-  return `  ${getItemTypeIcon(type)}\t`;
+  return `  ${defaultConfig.item.getItemTypeIcon(type)}\t`;
 };
 
-const newItemTemplate = (
-  type = 'custom',
-  version = stableVersion,
-  choices = [],
-  variation = ''
-) => {
+const newItemTemplate = (type = 'custom', choices = [], variation = '') => {
   const result = {
     name: type,
-    message: `Please provide the following information for the ${type} item ${getItemTypeIcon(
+    message: `Please provide the following information for the ${type} item ${defaultConfig.item.getItemTypeIcon(
       type
     )}`,
     choices: [
@@ -86,37 +39,31 @@ const newItemTemplate = (
         name: 'name',
         message: 'Item Name',
         initial: `New ${type} ${variation ? variation + ' ' : ''}item`,
-        validate(value) {
-          if (
-            value &&
-            fs.existsSync(
-              path.join(
-                defaultPath.possibleBehaviorPackInWorkingPath,
-                'items',
-                `${items.normalizeName(value)}.json`
-              )
-            )
-          ) {
-            return exports.newCustomItem.styles.red(
-              `Item ${value} already exists!`
-            );
-          }
-          return true;
-        },
       },
       {
         name: 'namespace',
         message: 'Namespace',
-        initial: process.env.npm_package_config_project_namespace || 'my_item',
+        initial: projectConfig.id || defaultConfig.item.config.namespace,
       },
       {
-        name: 'format_version',
-        message: 'Format Version',
-        initial: version,
+        name: 'forge.className',
+        message: 'Class Name',
+        initial: defaultConfig.item.config.namespace,
+        onChoice(state, choice) {
+          const { name } = this.values;
+          choice.initial = `${normalizeHelper.normalizeClassName(name)}`;
+        },
+        validate(value) {
+          return value == normalizeHelper.normalizeClassName(value);
+        },
+        result(value) {
+          return normalizeHelper.normalizeClassName(value);
+        },
+        disabled: type == 'simple',
       },
       {
-        name: 'foil',
-        message: 'Foil 🧪',
+        name: 'attributes.foil',
+        message: 'Foil',
         enabled: false,
         format(input, choice) {
           return enquirerHelper.formatBoolean(input, choice, this);
@@ -130,17 +77,6 @@ const newItemTemplate = (
   if (choices.length > 0) {
     result.choices = result.choices.concat(choices);
   }
-  result.choices = result.choices.concat({
-    name: 'save_config',
-    message: 'Save item config 💾',
-    enabled: false,
-    format(input, choice) {
-      return enquirerHelper.formatBoolean(input, choice, this);
-    },
-    result(value, choice) {
-      return choice.enabled;
-    },
-  });
   return result;
 };
 
@@ -148,6 +84,12 @@ exports.newItemType = new Select({
   name: 'itemType',
   message: 'Select the item type you want to create',
   choices: [
+    {
+      name: 'simple',
+      message: `${getItemTypeIconForSelection(
+        'simple'
+      )} Simple Item (e.g. nuggets)`,
+    },
     {
       name: 'custom',
       message: `${getItemTypeIconForSelection(
@@ -159,6 +101,7 @@ exports.newItemType = new Select({
       message: `${getItemTypeIconForSelection(
         'armor'
       )}  Armor item (e.g. helmet, chestplate, ...)`,
+      disabled: true,
     },
     {
       name: 'blockPlacer',
@@ -172,12 +115,13 @@ exports.newItemType = new Select({
       message: `${getItemTypeIconForSelection(
         'digger'
       )}  Digger item (e.g. pickaxe)`,
+      disabled: true,
     },
     {
       name: 'dyePowder',
       message: `${getItemTypeIconForSelection(
         'dyePowder'
-      )}Dye powder item (e.g. red, green, blue, ...)`,
+      )} Dye powder item (e.g. red, green, blue, ...)`,
       disabled: true,
     },
     {
@@ -190,10 +134,12 @@ exports.newItemType = new Select({
     {
       name: 'food',
       message: `${getItemTypeIconForSelection('food')} Food item (e.g. apple)`,
+      disabled: true,
     },
     {
       name: 'fuel',
       message: `${getItemTypeIconForSelection('fuel')}  Fuel item (e.g. coal)`,
+      disabled: true,
     },
     {
       name: 'projectile',
@@ -207,12 +153,14 @@ exports.newItemType = new Select({
       message: `${getItemTypeIconForSelection(
         'throwable'
       )}  Throwable item (e.g. snowball)`,
+      disabled: true,
     },
     {
       name: 'weapon',
       message: `${getItemTypeIconForSelection(
         'weapon'
       )}  Weapon item (e.g. axe, sword, ...)`,
+      disabled: true,
     },
     {
       name: 'wearable',
@@ -225,7 +173,7 @@ exports.newItemType = new Select({
 });
 
 exports.newArmorType = new Select({
-  name: 'armorType',
+  name: 'armor.type',
   message: 'Select the armor type you want to create',
   choices: [
     {
@@ -233,20 +181,20 @@ exports.newArmorType = new Select({
       message: `${getItemTypeIconForSelection('custom')}   Custom armor`,
     },
     {
-      name: 'boots',
-      message: `${getItemTypeIconForSelection('boots')} Boots`,
+      name: 'helmet',
+      message: `${getItemTypeIconForSelection('helmet')}  Helmet`,
     },
     {
       name: 'chestplate',
       message: `${getItemTypeIconForSelection('chestplate')}  Chestplate`,
     },
     {
-      name: 'helmet',
-      message: `${getItemTypeIconForSelection('helmet')}  Helmet`,
-    },
-    {
       name: 'leggings',
       message: `${getItemTypeIconForSelection('leggings')}  Leggings`,
+    },
+    {
+      name: 'boots',
+      message: `${getItemTypeIconForSelection('boots')} Boots`,
     },
   ],
 });
@@ -254,81 +202,97 @@ exports.newArmorType = new Select({
 exports.newArmorItem = (armor_type) => {
   const armorItemSelection = [
     {
-      name: 'armor_type',
+      name: 'variation',
       message: 'Armor Type',
       initial: armor_type,
       hidden: true,
     },
     {
-      name: 'protection',
+      name: 'armor.protection',
       message: 'Protection 🧪',
       initial: '5',
     },
     {
-      name: 'texture_type',
+      name: 'armor.textureType',
       message: 'Texture type (e.g. diamond, gold, ...) 🧪',
       initial: '',
     },
     {
-      name: 'max_stack_size',
+      name: 'attributes.maxStackSize',
       message: 'Max stack size',
       initial: '1',
     },
   ];
+
+  // Default Texture per Armor Type
   switch (armor_type) {
     case 'boots':
     case 'chestplate':
     case 'helmet':
       armorItemSelection.push({
-        name: 'textures_default',
+        name: 'textures.default',
         message: 'Texture (default)',
         initial: 'textures/models/armor/armor_1',
       });
       break;
     case 'leggings':
       armorItemSelection.push({
-        name: 'textures_default',
+        name: 'textures.default',
         message: 'Texture (default)',
         initial: 'textures/models/armor/armor_2',
       });
       break;
     case 'custom':
       armorItemSelection.push({
-        name: 'render_offset',
+        name: 'renderOffset.type',
         message: 'Render offset',
         initial: 'chestplates',
       });
       armorItemSelection.push({
-        name: 'wearable_slot',
+        name: 'wearable.slot',
         message: 'Wearable slot',
         initial: 'slot.armor.chest',
       });
       armorItemSelection.push({
-        name: 'textures_default',
+        name: 'textures.default',
         message: 'Texture (default)',
         initial: 'textures/models/armor/armor_custom',
       });
       break;
   }
   armorItemSelection.push({
-    name: 'textures_enchanted',
+    name: 'textures.enchanted',
     message: 'Texture (enchanted)',
     initial: 'textures/misc/enchanted_armor',
   });
-  return new Form(
-    newItemTemplate(
-      `armor`,
-      experimentalVersion,
-      armorItemSelection,
-      armor_type
-    )
-  );
+
+  // Attachable Config per armor Type
+  switch (armor_type) {
+    case 'boots':
+    case 'chestplate':
+    case 'helmet':
+    case 'leggings':
+      armorItemSelection.push({
+        name: 'attachable.geometry',
+        message: 'Attachable Geometry',
+        initial: 'geometry.humanoid.armor.' + armor_type,
+      });
+      break;
+    default:
+      armorItemSelection.push({
+        name: 'attachable.geometry',
+        message: 'Attachable Geometry',
+        initial: '',
+      });
+  }
+
+  return new Form(newItemTemplate(`armor`, armorItemSelection, armor_type));
 };
 
 exports.newDiggerItem = new Form(
-  newItemTemplate('digger', experimentalVersion, [
+  newItemTemplate('digger', [
     {
-      name: 'use_efficiency',
+      name: 'digger.useEfficiency',
       message: 'Use Efficiency 🧪',
       enabled: false,
       format(input, choice) {
@@ -339,7 +303,7 @@ exports.newDiggerItem = new Form(
       },
     },
     {
-      name: 'destroy_speeds',
+      name: 'digger.destroySpeeds',
       message: 'Destroy speed 🧪',
       enabled: false,
       format(input, choice) {
@@ -350,12 +314,12 @@ exports.newDiggerItem = new Form(
       },
     },
     {
-      name: 'on_dig',
+      name: 'digger.onDig',
       message: 'On Dig action (for unlisted blocks) 🧪',
       initial: '',
     },
     {
-      name: 'hand_equipped',
+      name: 'attributes.handEquipped',
       message: 'Hand equipped',
       enabled: true,
       format(input, choice) {
@@ -366,7 +330,7 @@ exports.newDiggerItem = new Form(
       },
     },
     {
-      name: 'max_stack_size',
+      name: 'attributes.maxStackSize',
       message: 'Max stack size',
       initial: '1',
     },
@@ -374,9 +338,9 @@ exports.newDiggerItem = new Form(
 );
 
 exports.newFoodItem = new Form(
-  newItemTemplate('food', stableVersion, [
+  newItemTemplate('food', [
     {
-      name: 'can_always_eat',
+      name: 'food.canAlwaysEat',
       message: 'Can always eat',
       initial: false,
       format(input, choice) {
@@ -387,12 +351,12 @@ exports.newFoodItem = new Form(
       },
     },
     {
-      name: 'nutrition',
+      name: 'food.nutrition',
       message: 'Nutrition (number)',
       initial: '4',
     },
     {
-      name: 'effects',
+      name: 'food.effects',
       message: 'Effects',
       enabled: false,
       format(input, choice) {
@@ -403,22 +367,22 @@ exports.newFoodItem = new Form(
       },
     },
     {
-      name: 'saturation_modifier',
+      name: 'food.saturationModifier',
       message: 'Saturation Modifier',
       initial: 'low',
     },
     {
-      name: 'using_converts_to',
+      name: 'food.usingConvertsTo',
       message: 'Using Converts to	(e.g. bowl) 🧪',
       initial: '',
     },
     {
-      name: 'use_duration',
+      name: 'attributes.useDuration',
       message: 'Use duration',
       initial: '8',
     },
     {
-      name: 'use_animation',
+      name: 'attributes.useAnimation',
       message: 'Use Animation',
       initial: 'eat',
     },
@@ -426,20 +390,20 @@ exports.newFoodItem = new Form(
 );
 
 exports.newFuelItem = new Form(
-  newItemTemplate('fuel', experimentalVersion, [
+  newItemTemplate('fuel', [
     {
-      name: 'duration',
-      message: 'Duration 🧪',
+      name: 'fuel.duration',
+      message: 'Duration',
       initial: '3',
     },
   ])
 );
 
 exports.newThrowableItem = new Form(
-  newItemTemplate('throwable', experimentalVersion, [
+  newItemTemplate('throwable', [
     {
-      name: 'do_swing_animation',
-      message: 'Do swing animation 🧪',
+      name: 'throwable.doSwingAnimation',
+      message: 'Do swing animation',
       enabled: true,
       format(input, choice) {
         return enquirerHelper.formatBoolean(input, choice, this);
@@ -449,27 +413,27 @@ exports.newThrowableItem = new Form(
       },
     },
     {
-      name: 'launch_power_scale',
-      message: 'Launch power scale 🧪',
+      name: 'throwable.launchPowerScale',
+      message: 'Launch power scale',
       initial: '1.0',
     },
     {
-      name: 'max_draw_duration',
-      message: 'Max draw duration 🧪',
+      name: 'throwable.maxDrawDuration',
+      message: 'Max draw duration',
       initial: '0.0',
     },
     {
-      name: 'max_launch_power',
-      message: 'Max launch power 🧪',
+      name: 'throwable.maxLaunchPower',
+      message: 'Max launch power',
       initial: '1.0',
     },
     {
-      name: 'min_draw_duration',
+      name: 'throwable.minDrawDuration',
       message: 'Min draw duration 🧪',
       initial: '0.0',
     },
     {
-      name: 'scale_power_by_draw_duration',
+      name: 'throwable.scalePowerByDrawDuration',
       message: 'Scale power by draw duration 🧪',
       enabled: true,
       format(input, choice) {
@@ -480,7 +444,7 @@ exports.newThrowableItem = new Form(
       },
     },
     {
-      name: 'hand_equipped',
+      name: 'attributes.handEquipped',
       message: 'Hand equipped',
       enabled: true,
       format(input, choice) {
@@ -491,7 +455,7 @@ exports.newThrowableItem = new Form(
       },
     },
     {
-      name: 'use_duration',
+      name: 'attributes.useDuration',
       message: 'Use duration',
       initial: '3600',
     },
@@ -499,29 +463,29 @@ exports.newThrowableItem = new Form(
 );
 
 exports.newWeaponItem = new Form(
-  newItemTemplate('weapon', stableVersion, [
+  newItemTemplate('weapon', [
     {
-      name: 'on_hit_block',
-      message: 'On hit block 🧪',
+      name: 'weapon.onHitBlock',
+      message: 'On hit block',
       initial: '',
     },
     {
-      name: 'on_hurt_entity',
-      message: 'On hurt entity 🧪',
+      name: 'weapon.onHurtEntity',
+      message: 'On hurt entity',
       initial: '',
     },
     {
-      name: 'on_not_hurt_entity',
-      message: 'On not hurt entity 🧪',
+      name: 'weapon.onNotHurtEntity',
+      message: 'On not hurt entity',
       initial: '',
     },
     {
-      name: 'damage',
-      message: 'Damage 🧪',
+      name: 'attributes.damage',
+      message: 'Damages',
       initial: '',
     },
     {
-      name: 'hand_equipped',
+      name: 'attributes.handEquipped',
       message: 'Hand equipped',
       enabled: true,
       format(input, choice) {
@@ -532,11 +496,13 @@ exports.newWeaponItem = new Form(
       },
     },
     {
-      name: 'max_stack_size',
+      name: 'attributes.maxStackSize',
       message: 'Max stack size',
       initial: '1',
     },
   ])
 );
 
-exports.newCustomItem = new Form(newItemTemplate('custom', stableVersion));
+exports.newSimpleItem = new Form(newItemTemplate('simple'));
+
+exports.newCustomItem = new Form(newItemTemplate('custom'));
