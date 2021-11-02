@@ -8,6 +8,7 @@
 
 const args = process.argv.slice(2);
 
+const block = require('./commands/block.js');
 const debug = require('./commands/debug.js');
 const init = require('./commands/init.js');
 const item = require('./commands/item.js');
@@ -22,6 +23,9 @@ switch (args[0]) {
     switch (args[1]) {
       case 'item':
         item.add(args[2]);
+        break;
+      case 'block':
+        block.add(args[2]);
         break;
       default:
         usage.showAddUsage();

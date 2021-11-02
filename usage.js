@@ -21,6 +21,8 @@ const addCommands = `
  ${command} add item <config file>\t\t${chalk.grey(
   'add a new item based on the given config file'
 )}
+
+ ${command} add block\t\t${chalk.grey('add a new block (interactive)')}
 `.substr(1);
 
 const listCommands = `

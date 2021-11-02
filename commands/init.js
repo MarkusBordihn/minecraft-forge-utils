@@ -7,7 +7,7 @@
 const { initUtils } = require('minecraft-utils-shared');
 
 const newWorkspace = () => {
-  initUtils.createWorkspace('minecraft-bedrock-utils');
+  initUtils.createWorkspace('minecraft-forge-utils');
 };
 
 exports.newWorkspace = newWorkspace;

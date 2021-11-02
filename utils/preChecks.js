@@ -17,7 +17,7 @@ exports.errorNonJavaPath = () => {
   if (!fs.existsSync(defaultPath.forge.javaPath)) {
     console.error(
       chalk.red(
-        'Unable to find src/main/java under',
+        'Unable to find src/main/java folder at',
         defaultPath.forge.javaPath
       )
     );

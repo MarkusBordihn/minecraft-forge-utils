@@ -38,6 +38,9 @@ const createItem = (name, itemOptions = {}) => {
   configurationUtils.saveDefaultConfig(`item_${options.id}.mbu`, options);
 };
 
+/**
+ * @param {object} options
+ */
 const createSimpleItem = (options) => {
   templateUtils.processTemplateFile(
     path.join(templatesPath, 'java', 'item', 'SimpleItem.java'),
@@ -51,6 +54,9 @@ const createSimpleItem = (options) => {
   );
 };
 
+/**
+ * @param {object} options
+ */
 const createCustomItem = (options) => {
   fileUtils.createFileIfNotExists(
     defaultPath.forge.itemPath,

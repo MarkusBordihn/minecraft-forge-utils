@@ -59,6 +59,7 @@ const newProjectTemplate = (
     defaultPath.project.path
   );
 
+  // Copy project Template
   copyProjectTemplateFiles(
     path.join(options.forge.templatePath),
     defaultPath.project.path
@@ -75,6 +76,8 @@ const newProjectTemplate = (
 };
 
 const copyProjectTemplateFiles = (template, target) => {
+  console.log('✔️  Copy project template ...');
+
   // Copy VS Code relevant files
   fileUtils.copyFolderIfNotExists(
     path.join(template, '.vscode'),
@@ -129,28 +132,47 @@ const copyProjectTemplateFiles = (template, target) => {
 };
 
 const prepareProjectTemplate = (target, options) => {
+  console.log('✔️  Prepare project template ...');
+
   // Create mod folder
   fileUtils.createFolderIfNotExists(options.forge.classPath);
 
-  // Rename template main class files
-  const templateDir = path.join(
+  // Rename java main class files and java folder
+  const javaDir = path.join(
     defaultPath.project.path,
     'src',
     'main',
     'java',
     '__mod_namespace__'
   );
-  fileUtils.renameFileIfExists(
-    path.join(templateDir, '__mod_class_name__.java'),
-    path.join(templateDir, `${options.forge.className}.java`)
+  fileUtils.renameFile(
+    path.join(javaDir, '__mod_class_name__.java'),
+    path.join(javaDir, `${options.forge.className}.java`)
   );
-  fileUtils.renameFileIfExists(templateDir, options.forge.classPath, true);
+  fileUtils.renameFile(javaDir, options.forge.classPath, true);
 
-  // Create assets folder
-  fileUtils.createFolderIfNotExists(options.forge.assetsPath);
+  // Rename resource folder
+  const resourceDir = path.join(
+    defaultPath.project.path,
+    'src',
+    'main',
+    'resources'
+  );
+  fileUtils.renameFile(
+    path.join(resourceDir, 'assets', '__mod_namespace__'),
+    options.forge.assetsPath,
+    true
+  );
+  fileUtils.renameFile(
+    path.join(resourceDir, 'data', '__mod_namespace__'),
+    options.forge.dataPath,
+    true
+  );
 };
 
 const replaceProjectTemplatePlaceholder = (target, options) => {
+  console.log('✔️  Replace template placeholder ...');
+
   // build.gradle
   const buildFile = path.join(target, 'build.gradle');
   fileUtils.setPlaceholder(buildFile, 'ModId', options.id);

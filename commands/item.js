@@ -104,20 +104,4 @@ const add = (name, options = {}) => {
   );
 };
 
-/**
- * @param {String} search_path
- */
-const list = (search_path) => {
-  const possibleItems = items.getItems(search_path);
-  if (Object.keys(possibleItems).length > 0) {
-    console.log('List of Items', possibleItems);
-  } else {
-    console.log(chalk.red('Found no items.'));
-    console.info(
-      '\nTip: Use "npx minecraft-forge-utils add item" to add a new item.\n'
-    );
-  }
-};
-
 exports.add = add;
-exports.list = list;
