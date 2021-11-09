@@ -33,6 +33,9 @@ const createBlock = (name, blockOptions = {}) => {
     case defaultConfig.block.type.ORE:
       createOreBlock(options);
       break;
+    case defaultConfig.block.type.ROD:
+      createRodBlock(options);
+      break;
   }
 
   // Store block configuration, if needed
@@ -43,9 +46,13 @@ const createBlock = (name, blockOptions = {}) => {
  * @param {object} options
  */
 const createCustomBlock = (options) => {
+  const templateOptions = {
+    ...options.placeholder,
+    ...projectConfig.placeholder,
+  };
   templateUtils.processTemplateFile(
     path.join(templatesPath, 'java', 'block', 'CustomBlock.java'),
-    { ...options.placeholder, ...projectConfig.placeholder },
+    templateOptions,
     projectConfig.forge.classPath
   );
   templateUtils.processTemplateFile(
@@ -56,7 +63,7 @@ const createCustomBlock = (options) => {
       'block',
       'CustomBlock.json'
     ),
-    { ...options.placeholder, ...projectConfig.placeholder },
+    templateOptions,
     projectConfig.forge.assetsPath
   );
 };
@@ -65,9 +72,13 @@ const createCustomBlock = (options) => {
  * @param {object} options
  */
 const createSimpleBlock = (options) => {
+  const templateOptions = {
+    ...options.placeholder,
+    ...projectConfig.placeholder,
+  };
   templateUtils.processTemplateFile(
     path.join(templatesPath, 'java', 'block', 'SimpleBlock.java'),
-    { ...options.placeholder, ...projectConfig.placeholder },
+    templateOptions,
     projectConfig.forge.classPath
   );
   templateUtils.processTemplateFile(
@@ -78,7 +89,7 @@ const createSimpleBlock = (options) => {
       'block',
       'SimpleBlock.json'
     ),
-    { ...options.placeholder, ...projectConfig.placeholder },
+    templateOptions,
     projectConfig.forge.assetsPath
   );
 };
@@ -87,15 +98,49 @@ const createSimpleBlock = (options) => {
  * @param {object} options
  */
 const createOreBlock = (options) => {
+  const templateOptions = {
+    ...options.placeholder,
+    ...projectConfig.placeholder,
+  };
   templateUtils.processTemplateFile(
     path.join(templatesPath, 'java', 'block', 'OreBlock.java'),
-    { ...options.placeholder, ...projectConfig.placeholder },
+    templateOptions,
     projectConfig.forge.classPath
   );
   templateUtils.processTemplateFile(
     path.join(templatesPath, 'resources', 'models', 'block', 'OreBlock.json'),
-    { ...options.placeholder, ...projectConfig.placeholder },
+    templateOptions,
     projectConfig.forge.assetsPath
+  );
+  templateUtils.processTemplateFile(
+    path.join(templatesPath, 'resources', 'data', 'block', 'OreBlock.json'),
+    templateOptions,
+    projectConfig.forge.dataPath
+  );
+};
+
+/**
+ * @param {object} options
+ */
+const createRodBlock = (options) => {
+  const templateOptions = {
+    ...options.placeholder,
+    ...projectConfig.placeholder,
+  };
+  templateUtils.processTemplateFile(
+    path.join(templatesPath, 'java', 'block', 'RodBlock.java'),
+    templateOptions,
+    projectConfig.forge.classPath
+  );
+  templateUtils.processTemplateFile(
+    path.join(templatesPath, 'resources', 'models', 'block', 'RodBlock.json'),
+    templateOptions,
+    projectConfig.forge.assetsPath
+  );
+  templateUtils.processTemplateFile(
+    path.join(templatesPath, 'resources', 'data', 'block', 'RodBlock.json'),
+    templateOptions,
+    projectConfig.forge.dataPath
   );
 };
 

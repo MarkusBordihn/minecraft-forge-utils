@@ -85,6 +85,12 @@ exports.newBlockType = new Select({
       )} Ore Block (e.g. iron ore, ...)`,
     },
     {
+      name: 'rod',
+      message: `${getBlockTypeIconForSelection(
+        'rod'
+      )} Rod Block (e.g. end rod, ...)`,
+    },
+    {
       name: 'custom',
       message: `${getBlockTypeIconForSelection(
         'custom'
@@ -94,6 +100,8 @@ exports.newBlockType = new Select({
 });
 
 exports.newOreBlock = new Form(newBlockTemplate('ore'));
+
+exports.newRodBlock = new Form(newBlockTemplate('rod'));
 
 exports.newSimpleBlock = new Form(
   newBlockTemplate('simple', [

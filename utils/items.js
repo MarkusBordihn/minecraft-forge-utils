@@ -25,12 +25,20 @@ const createItem = (name, itemOptions = {}) => {
   // Normalized options
   const options = defaultConfig.item.normalize(itemOptions, name);
 
+  if (!options.forge.className) {
+    console.error('Seems missing some important information!', options);
+    return;
+  }
+
   switch (options.type) {
     case defaultConfig.item.type.SIMPLE:
       createSimpleItem(options);
       break;
     case defaultConfig.item.type.CUSTOM:
       createCustomItem(options);
+      break;
+    case defaultConfig.item.type.TEMPLATE:
+      createTemplateItem(options);
       break;
   }
 
@@ -61,6 +69,24 @@ const createCustomItem = (options) => {
   fileUtils.createFileIfNotExists(
     defaultPath.forge.itemPath,
     `${options.forge.className}.java`
+  );
+};
+
+/**
+ * @param {string} template
+ * @param {object} options
+ */
+const createTemplateItem = (options) => {
+  const placeholders = { ...options.placeholder, ...projectConfig.placeholder };
+  const targetPaths = {
+    assetsPath: projectConfig.forge.assetsPath,
+    classPath: projectConfig.forge.classPath,
+    dataPath: projectConfig.forge.dataPath,
+  };
+  templateUtils.processTemplateFile(
+    options.template,
+    placeholders,
+    targetPaths
   );
 };
 

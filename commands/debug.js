@@ -6,14 +6,20 @@
 
 const args = process.argv.slice(2);
 const {
-  translationUtils,
+  configurationUtils,
   defaultPath,
+  translationUtils,
   utilsVersion,
 } = require('minecraft-utils-shared');
 
 const debug = () => {
+  const projectConfig = configurationUtils.loadProjectConfig();
+
   console.log('minecraft-forge-utils:', args, '\n');
   console.log('Detected Language:', translationUtils.language);
+  if (projectConfig) {
+    console.log('Project Config', projectConfig);
+  }
   console.log('Detected paths:', defaultPath);
   console.log('Process Env:', process.env);
   console.log('Shared utils version:', utilsVersion);

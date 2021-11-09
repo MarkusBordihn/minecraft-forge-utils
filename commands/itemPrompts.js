@@ -10,6 +10,7 @@ const {
   defaultConfig,
   enquirerHelper,
   normalizeHelper,
+  templateUtils,
 } = require('minecraft-utils-shared');
 
 const projectConfig = configurationUtils.loadProjectConfig();
@@ -61,17 +62,6 @@ const newItemTemplate = (type = 'custom', choices = [], variation = '') => {
         },
         disabled: type == 'simple',
       },
-      {
-        name: 'attributes.foil',
-        message: 'Foil',
-        enabled: false,
-        format(input, choice) {
-          return enquirerHelper.formatBoolean(input, choice, this);
-        },
-        result(value, choice) {
-          return choice.enabled;
-        },
-      },
     ],
   };
   if (choices.length > 0) {
@@ -85,9 +75,9 @@ exports.newItemType = new Select({
   message: 'Select the item type you want to create',
   choices: [
     {
-      name: 'simple',
+      name: defaultConfig.item.type.SIMPLE,
       message: `${getItemTypeIconForSelection(
-        'simple'
+        defaultConfig.item.type.SIMPLE
       )} Simple Item (e.g. nuggets)`,
     },
     {
@@ -168,6 +158,13 @@ exports.newItemType = new Select({
         'wearable'
       )} Wearable item (e.g. cloth)`,
       disabled: true,
+    },
+    {
+      name: 'template',
+      message: `${getItemTypeIconForSelection(
+        'template'
+      )} Item based on template file in .minecraft-forge-utils-template folder`,
+      disabled: !templateUtils.hasCustomTemplateFiles(),
     },
   ],
 });
@@ -506,3 +503,15 @@ exports.newWeaponItem = new Form(
 exports.newSimpleItem = new Form(newItemTemplate('simple'));
 
 exports.newCustomItem = new Form(newItemTemplate('custom'));
+
+exports.newTemplateItem = (template) => {
+  const templateItemSelection = [
+    {
+      name: 'template',
+      message: 'Template File',
+      initial: template,
+      hidden: true,
+    },
+  ];
+  return new Form(newItemTemplate('template', templateItemSelection));
+};

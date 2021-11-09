@@ -46,13 +46,28 @@ const add = (name, options = {}) => {
               .then((answers) => add(answers.name, answers))
               .catch(console.error);
             break;
+          case 'rod':
+            prompts.newRodBlock
+              .run()
+              .then((answers) => add(answers.name, answers))
+              .catch(console.error);
+            break;
           case 'custom':
-          default:
             prompts.newCustomBlock
               .run()
               .then((answers) => add(answers.name, answers))
               .catch(console.error);
             break;
+          default:
+            console.warn(
+              chalk.red(
+                'Unknown block type' + type + ', will use custom instead!'
+              )
+            );
+            prompts.newCustomBlock
+              .run()
+              .then((answers) => add(answers.name, answers))
+              .catch(console.error);
         }
       })
       .catch(console.error);

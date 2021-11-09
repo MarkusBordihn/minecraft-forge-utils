@@ -8,43 +8,47 @@
 
 const args = process.argv.slice(2);
 
-const block = require('./commands/block.js');
-const debug = require('./commands/debug.js');
-const init = require('./commands/init.js');
-const item = require('./commands/item.js');
-const project = require('./commands/project.js');
-const run = require('./commands/run.js');
-const usage = require('./usage.js');
-const uuid = require('./commands/uuid.js');
+const blockCommand = require('./commands/block.js');
+const debugCommand = require('./commands/debug.js');
+const initCommand = require('./commands/init.js');
+const itemCommand = require('./commands/item.js');
+const projectCommand = require('./commands/project.js');
+const runCommand = require('./commands/run.js');
+const testCommand = require('./commands/test.js');
+const usageCommand = require('./usage.js');
+const uuidCommand = require('./commands/uuid.js');
 const { version } = require('./package.json');
 
 switch (args[0]) {
   case 'add':
     switch (args[1]) {
       case 'item':
-        item.add(args[2]);
+        itemCommand.add(args[2]);
         break;
       case 'block':
-        block.add(args[2]);
+        blockCommand.add(args[2]);
         break;
       default:
-        usage.showAddUsage();
+        usageCommand.showAddUsage();
     }
     break;
   case 'debug':
-    debug();
+    debugCommand();
     break;
   case 'init':
-    init.newWorkspace();
+    initCommand.newWorkspace();
     break;
   case 'new':
-    project.newProject(args[1], args[2]);
+    projectCommand.newProject(args[1], args[2]);
     break;
   case 'run':
-    run.runClient();
+    runCommand.runClient();
+    break;
+  case 'test':
+    testCommand.runTest();
     break;
   case 'uuid':
-    console.log(uuid.getUUID(args[1], args[2]));
+    console.log(uuidCommand.getUUID(args[1], args[2]));
     break;
   case 'version':
   case '-v':
@@ -52,5 +56,5 @@ switch (args[0]) {
     console.log(version);
     break;
   default:
-    usage.showUsage();
+    usageCommand.showUsage();
 }

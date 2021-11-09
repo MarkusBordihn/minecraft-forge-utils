@@ -21,6 +21,10 @@ const addCommands = `
  ${command} add item <config file>\t\t${chalk.grey(
   'add a new item based on the given config file'
 )}
+${command} add item <template file>\t\t${chalk.grey(
+  'add a new item based on the given template file'
+)}
+
 
  ${command} add block\t\t${chalk.grey('add a new block (interactive)')}
 `.substr(1);
@@ -57,6 +61,7 @@ const miscCommands = `
 const debugCommands = `
  ${command} debug\t\t\t${chalk.grey('shows debug information')}
  ${command} version\t\t\t${chalk.grey('shows current version number')}
+ ${command} test\t\t\t${chalk.grey('runs the compiler to test the code')}
 `.substr(1);
 
 exports.showUsage = () => {
