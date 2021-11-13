@@ -5,6 +5,7 @@
  */
 
 const chalk = require('chalk');
+const fs = require('fs-extra');
 const { configurationUtils } = require('minecraft-utils-shared');
 
 const blocks = require('../utils/blocks.js');
@@ -25,6 +26,22 @@ const add = (name, options = {}) => {
   if (name && name.endsWith('.mfu')) {
     options = configurationUtils.loadConfig(name);
     name = options.name;
+  }
+
+  // Handle template files
+  if (
+    name &&
+    (name.endsWith('.template') ||
+      name.endsWith('.json') ||
+      name.endsWith('.java')) &&
+    fs.existsSync(name)
+  ) {
+    prompts
+      .newTemplateItem(name)
+      .run()
+      .then((answers) => add(answers.name, answers))
+      .catch(console.error);
+    return;
   }
 
   // If no name was provided start interactive questions.

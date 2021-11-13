@@ -23,6 +23,11 @@ const createBlock = (name, blockOptions = {}) => {
   // Normalized options
   const options = defaultConfig.block.normalize(blockOptions, name);
 
+  if (!options.forge.className) {
+    console.error('Seems missing some important information!', options);
+    return;
+  }
+
   switch (options.type) {
     case defaultConfig.block.type.CUSTOM:
       createCustomBlock(options);
@@ -35,6 +40,9 @@ const createBlock = (name, blockOptions = {}) => {
       break;
     case defaultConfig.block.type.ROD:
       createRodBlock(options);
+      break;
+    case defaultConfig.block.type.TEMPLATE:
+      createTemplateItem(options);
       break;
   }
 
@@ -141,6 +149,24 @@ const createRodBlock = (options) => {
     path.join(templatesPath, 'resources', 'data', 'block', 'RodBlock.json'),
     templateOptions,
     projectConfig.forge.dataPath
+  );
+};
+
+/**
+ * @param {string} template
+ * @param {object} options
+ */
+const createTemplateItem = (options) => {
+  const placeholders = { ...options.placeholder, ...projectConfig.placeholder };
+  const targetPaths = {
+    assetsPath: projectConfig.forge.assetsPath,
+    classPath: projectConfig.forge.classPath,
+    dataPath: projectConfig.forge.dataPath,
+  };
+  templateUtils.processTemplateFile(
+    options.template,
+    placeholders,
+    targetPaths
   );
 };
 

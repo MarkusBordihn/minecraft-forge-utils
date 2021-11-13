@@ -9,6 +9,7 @@ const {
   configurationUtils,
   defaultConfig,
   normalizeHelper,
+  templateUtils,
 } = require('minecraft-utils-shared');
 
 const projectConfig = configurationUtils.loadProjectConfig();
@@ -79,6 +80,12 @@ exports.newBlockType = new Select({
       )} Simple Block (e.g. decoration)`,
     },
     {
+      name: 'custom',
+      message: `${getBlockTypeIconForSelection(
+        'custom'
+      )}  Custom block (e.g. custom block)`,
+    },
+    {
       name: 'ore',
       message: `${getBlockTypeIconForSelection(
         'ore'
@@ -91,10 +98,11 @@ exports.newBlockType = new Select({
       )} Rod Block (e.g. end rod, ...)`,
     },
     {
-      name: 'custom',
+      name: 'template',
       message: `${getBlockTypeIconForSelection(
-        'custom'
-      )}  Custom block (e.g. custom block)`,
+        'template'
+      )} Item based on template file in .minecraft-forge-utils-template folder`,
+      disabled: !templateUtils.hasCustomTemplateFiles(),
     },
   ],
 });
@@ -114,3 +122,15 @@ exports.newSimpleBlock = new Form(
 );
 
 exports.newCustomBlock = new Form(newBlockTemplate('custom'));
+
+exports.newTemplateItem = (template) => {
+  const templateItemSelection = [
+    {
+      name: 'template',
+      message: 'Template File',
+      initial: template,
+      hidden: true,
+    },
+  ];
+  return new Form(newBlockTemplate('template', templateItemSelection));
+};
