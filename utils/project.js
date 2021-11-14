@@ -124,7 +124,7 @@ const copyProjectTemplateFiles = (template, target) => {
     path.join(target, 'gradlew.bat')
   );
 
-  // Copy Source files
+  // Copy Source files (java and resources)
   fileUtils.copyFolderIfNotExists(
     path.join(template, 'src'),
     path.join(target, 'src')

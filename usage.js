@@ -21,12 +21,17 @@ const addCommands = `
  ${command} add item <config file>\t\t${chalk.grey(
   'add a new item based on the given config file'
 )}
-${command} add item <template file>\t\t${chalk.grey(
+ ${command} add item <template file>\t\t${chalk.grey(
   'add a new item based on the given template file'
 )}
 
-
  ${command} add block\t\t${chalk.grey('add a new block (interactive)')}
+ ${command} add block <config file>\t\t${chalk.grey(
+  'add a new block based on the given config file'
+)}
+ ${command} add block <template file>\t\t${chalk.grey(
+  'add a new block based on the given template file'
+)}
 `.substr(1);
 
 const listCommands = `
@@ -70,6 +75,7 @@ exports.showUsage = () => {
 Usage:
  
 ${mainCommands}
+${addCommands}
 ${runCommands}
 ${miscCommands}
 ${debugCommands}`;
