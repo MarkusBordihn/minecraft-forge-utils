@@ -19,6 +19,14 @@ const projectTemplatePath = path.join(
   'third_party'
 );
 
+// Relative Path converter
+const toRelativePath = (folderPath) => {
+  if (path.isAbsolute(folderPath)) {
+    return path.relative(defaultPath.project.path, folderPath);
+  }
+  return folderPath;
+};
+
 const newProjectTemplate = (
   name,
   projectOptions = defaultConfig.project.config
@@ -34,13 +42,14 @@ const newProjectTemplate = (
 
   // Prepare template files based on the minEngineVersion, if needed.
   if (!options.forge.templatePath) {
-    options.forge.templatePath = path.join(
-      projectTemplatePath,
-      getProjectTemplate(options.minEngineVersion)
+    options.forge.templatePath = toRelativePath(
+      path.join(
+        projectTemplatePath,
+        getProjectTemplate(options.minEngineVersion)
+      )
     );
-    options.forge.templatesPath = path.join(
-      options.forge.templatePath,
-      'templates'
+    options.forge.templatesPath = toRelativePath(
+      path.join(options.forge.templatePath, 'templates')
     );
   }
   if (!options.forge.templatePath) {
