@@ -66,13 +66,10 @@ exports.errorNoJavaJDK = () => {
     } else {
       console.error(chalk.red('Unable to find any Java installation!'));
       console.info(
-        '\nTip: Install Java JDK like https://www.oracle.com/java/technologies/downloads/.\n'
+        '\nTip: Install Java JDK like https://www.oracle.com/java/technologies/downloads/ or https://jdk.java.net/17/.\n'
       );
     }
     return true;
-  }
-  if (javaJDKCheck.includes(' 17.')) {
-    console.warn(chalk.yellow('Found unsupported Java Version >= 17.x !'));
   }
   return false;
 };

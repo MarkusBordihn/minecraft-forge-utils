@@ -231,6 +231,7 @@ const getProjectTemplate = (version) => {
   switch (version) {
     case '1.16.5':
     case '1.17.1':
+    case '1.18':
       return `${prefix}${version}`;
     default:
       return '';

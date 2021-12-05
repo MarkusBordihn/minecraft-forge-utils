@@ -58,6 +58,8 @@ const newProject = (name, options = {}) => {
     return;
   }
   gradleUtils.runTask('');
+  gradleUtils.runTask('init');
+  gradleUtils.runTask('genVSCodeRuns');
 };
 
 exports.newProject = newProject;
