@@ -94,9 +94,13 @@ const packResourcePack = (name) => {
   // Parse Minecraft Version
   if (metaData.pack.pack_format == 6) {
     minecraftVersion = '1.16';
+  } else if (metaData.pack.pack_format == 7) {
+    minecraftVersion = '1.17';
+  } else if (metaData.pack.pack_format == 8) {
+    minecraftVersion = '1.18';
   }
 
-  // Prase Version
+  // Parse Version
   if (
     metaData.pack.description.toLowerCase().includes('version ') &&
     metaData.pack.description.toLowerCase().includes('\n')
