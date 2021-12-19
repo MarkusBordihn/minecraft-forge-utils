@@ -13,6 +13,24 @@ const { defaultPath } = require('minecraft-utils-shared');
 /**
  * @return {boolean}
  */
+exports.errorNonResourcePackFile = () => {
+  if (!fs.existsSync('pack.mcmeta')) {
+    console.error(
+      chalk.red(
+        'Unable to find any pack.mcmeta file folder in the current folder!'
+      )
+    );
+    console.info(
+      '\nTip: Use "npx minecraft-forge-utils new resourcepack" to start a new resource pack.\n'
+    );
+    return true;
+  }
+  return false;
+};
+
+/**
+ * @return {boolean}
+ */
 exports.errorNonJavaPath = () => {
   if (!fs.existsSync(defaultPath.forge.javaPath)) {
     console.error(

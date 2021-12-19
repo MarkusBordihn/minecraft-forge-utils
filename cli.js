@@ -12,6 +12,7 @@ const blockCommand = require('./commands/block.js');
 const debugCommand = require('./commands/debug.js');
 const initCommand = require('./commands/init.js');
 const itemCommand = require('./commands/item.js');
+const packCommand = require('./commands/pack.js');
 const projectCommand = require('./commands/project.js');
 const runCommand = require('./commands/run.js');
 const testCommand = require('./commands/test.js');
@@ -40,6 +41,18 @@ switch (args[0]) {
     break;
   case 'new':
     projectCommand.newProject(args[1], args[2]);
+    break;
+  case 'pack':
+    switch (args[1]) {
+      case 'resourcepack':
+        packCommand.packResourcePack();
+        break;
+      case 'project':
+        packCommand.packProject();
+        break;
+      default:
+        usageCommand.showPackUsage();
+    }
     break;
   case 'run':
     runCommand.runClient();
