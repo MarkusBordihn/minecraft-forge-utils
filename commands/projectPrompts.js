@@ -35,6 +35,10 @@ exports.newProjectPrompt = new Select({
   message: 'Please select the Minecraft version for your project',
   choices: [
     {
+      message: '1.18.1',
+      value: '1.18.1',
+    },
+    {
       message: '1.18',
       value: '1.18',
     },
