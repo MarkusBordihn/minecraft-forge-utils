@@ -1,6 +1,6 @@
 {
   "name": "minecraft-forge-utils",
-  "version": "1.5.2",
+  "version": "1.6.1",
   "description": "Collection of useful Minecraft Forge development related utilities.",
   "preferGlobal": true,
   "main": "index.js",
@@ -34,12 +34,12 @@
     "enquirer": "^2.3.6",
     "fs-extra": "^10.0.0",
     "ignore": "^5.2.0",
-    "minecraft-utils-shared": "^0.4.2"
+    "minecraft-utils-shared": "^0.4.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.7.0",
-    "@typescript-eslint/parser": "^5.7.0",
-    "eslint": "^8.5.0",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
+    "eslint": "^8.6.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
