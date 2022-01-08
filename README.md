@@ -77,9 +77,12 @@ For items the following additional placeholders are provided:
 
 For blocks the following additional placeholders are provided:
 
-- BlockName
+- BLOCKNANE
 - BLOCK_NAME
+- BlockName
+- blockName
 - block_name
+- blockname
 - BlockClassName
 
 #### Template commands
