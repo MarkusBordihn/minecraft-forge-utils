@@ -42,6 +42,15 @@ const addCommands = `
 )}
 `.substring(1);
 
+const createCommands = `
+ ${command} create files wood${defaultSpace}${chalk.grey(
+  'creates placeholder files for all wood types'
+)}
+ ${command} create files dye${defaultSpace2}${chalk.grey(
+  'creates placeholder files for all dye types'
+)}
+`.substring(1);
+
 const listCommands = `
  ${command} list items${defaultSpace}${chalk.grey(
   'list all items for the current project'
@@ -97,6 +106,7 @@ Usage:
  
 ${mainCommands}
 ${addCommands}
+${createCommands}
 ${runCommands}
 ${packCommands}
 ${miscCommands}
@@ -110,6 +120,15 @@ exports.showAddUsage = () => {
  Usage: add <type>
    
 ${addCommands}`;
+  console.log(usage);
+};
+
+exports.showCreateUsage = () => {
+  const usage = `Please specify the create option.
+ 
+ Usage: create <type> <subtype>
+   
+${createCommands}`;
   console.log(usage);
 };
 

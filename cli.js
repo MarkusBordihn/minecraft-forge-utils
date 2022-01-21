@@ -9,6 +9,7 @@
 const args = process.argv.slice(2);
 
 const blockCommand = require('./commands/block.js');
+const createCommand = require('./commands/create.js');
 const debugCommand = require('./commands/debug.js');
 const initCommand = require('./commands/init.js');
 const itemCommand = require('./commands/item.js');
@@ -31,6 +32,19 @@ switch (args[0]) {
         break;
       default:
         usageCommand.showAddUsage();
+    }
+    break;
+  case 'create':
+    if (args[2]) {
+      switch (args[1]) {
+        case 'files':
+          createCommand.createFiles(args[2], args[3]);
+          break;
+        default:
+          usageCommand.showCreateUsage();
+      }
+    } else {
+      usageCommand.showCreateUsage();
     }
     break;
   case 'debug':

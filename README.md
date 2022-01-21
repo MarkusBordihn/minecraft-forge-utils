@@ -45,6 +45,19 @@ additional details like:
 
 ![Example Screenshot](assets/doc/new_project_example.jpg)
 
+### add
+
+The add commands gives you an selection of pre-defined templates which could be
+used to create new blocks and items.
+
+### create
+
+The create command is used to create empty files for a specific group of items
+or blocks.
+
+Instead of creating 8 files manually for each wood type you can just use:
+`npx minecraft-forge-utils create files wood <filename>`
+
 ### run / run client
 
 The run / run client command tries to start a Minecraft client with your mod.
