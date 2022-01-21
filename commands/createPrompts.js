@@ -4,7 +4,7 @@
  * @author Markus@Bordihn.de (Markus Bordihn)
  */
 
-const { Form, Select } = require('enquirer');
+const { Form } = require('enquirer');
 
 exports.createWoodFiles = new Form({
   name: 'files',

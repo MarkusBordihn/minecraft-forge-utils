@@ -24,7 +24,7 @@ const createFiles = (type, name) => {
   switch (type) {
     case 'wood':
       create.createWoodFiles(name);
-    break;
+      break;
   }
 };
 
