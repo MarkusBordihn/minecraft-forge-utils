@@ -43,11 +43,11 @@ const addCommands = `
 `.substring(1);
 
 const createCommands = `
- ${command} create files wood${defaultSpace}${chalk.grey(
-  'creates placeholder files for all wood types'
+ ${command} create files color${defaultSpace3}${chalk.grey(
+  'creates placeholder files for all dye color types'
 )}
- ${command} create files dye${defaultSpace2}${chalk.grey(
-  'creates placeholder files for all dye types'
+ ${command} create files wood${defaultSpace3}${chalk.grey(
+  'creates placeholder files for all wood types'
 )}
 `.substring(1);
 

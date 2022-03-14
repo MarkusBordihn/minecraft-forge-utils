@@ -1,7 +1,7 @@
 {
   "ignore": {
     "chalk": {
-      "versions": "5.0.0",
+      "versions": "5.0.1",
       "reason": "Incompatible"
     }
   }

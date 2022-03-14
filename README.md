@@ -55,6 +55,9 @@ used to create new blocks and items.
 The create command is used to create empty files for a specific group of items
 or blocks.
 
+Instead of creating 16 files manually for each color dye type you can just use:
+`npx minecraft-forge-utils create files color <filename>`
+
 Instead of creating 8 files manually for each wood type you can just use:
 `npx minecraft-forge-utils create files wood <filename>`
 

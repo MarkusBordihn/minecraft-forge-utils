@@ -6,6 +6,18 @@
 
 const { Form } = require('enquirer');
 
+exports.createColorFiles = new Form({
+  name: 'files',
+  message: 'Please provide the file name for the placeholder files for color:',
+  choices: [
+    {
+      name: 'file_name',
+      message: 'Filename',
+      initial: '',
+    },
+  ],
+});
+
 exports.createWoodFiles = new Form({
   name: 'files',
   message: 'Please provide the file name for the placeholder files for wood:',

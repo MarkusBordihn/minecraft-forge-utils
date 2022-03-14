@@ -11,6 +11,12 @@ const createFiles = (type, name) => {
   // If no name was provided start interactive questions.
   if (!name) {
     switch (type) {
+      case 'color':
+        prompts.createColorFiles
+          .run()
+          .then((answers) => createFiles(type, answers.file_name))
+          .catch(console.error);
+        break;
       case 'wood':
         prompts.createWoodFiles
           .run()
@@ -22,6 +28,9 @@ const createFiles = (type, name) => {
   }
 
   switch (type) {
+    case 'color':
+      create.createColorFiles(name);
+      break;
     case 'wood':
       create.createWoodFiles(name);
       break;
