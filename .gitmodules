@@ -19,6 +19,7 @@
 	path = third_party/minecraft-forge-template-1.18.1
 	url = https://github.com/MarkusBordihn/minecraft-forge-template.git
 	branch = 1.18.1
+
 [submodule "third_party/minecraft-forge-template-1.18.2"]
 	path = third_party/minecraft-forge-template-1.18.2
 	url = https://github.com/MarkusBordihn/minecraft-forge-template.git
