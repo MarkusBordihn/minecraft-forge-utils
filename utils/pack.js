@@ -32,9 +32,15 @@ const packResourcePack = (name) => {
     );
     assetsFile = gitIgnore()
       .add(fs.readFileSync(gitIgnoreFile).toString())
-      .filter(glob.sync(path.join('./assets', '**')));
+      .filter(
+        glob.sync('**', {
+          cwd: path.join('./assets'),
+        })
+      );
   } else {
-    assetsFile = glob.sync(path.join('./assets', '**'));
+    assetsFile = glob.sync('**', {
+      cwd: path.join('./assets'),
+    });
   }
 
   // Pack Resource Pack.

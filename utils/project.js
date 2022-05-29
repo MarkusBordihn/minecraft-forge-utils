@@ -180,43 +180,59 @@ const prepareProjectTemplate = (target, options) => {
 };
 
 const replaceProjectTemplatePlaceholder = (target, options) => {
-  console.log('✔️  Replace template placeholder ...');
+  console.log('✔️  Replace template placeholder in', target);
 
   // build.gradle
-  const buildFile = path.join(target, 'build.gradle');
-  fileUtils.setPlaceholder(buildFile, 'ModId', options.id);
+  console.log('Handle build.gradle file ...');
+  fileUtils.setPlaceholder(target, 'build.gradle', 'ModId', options.id);
 
   // gradle.properties files
-  const gradleFile = path.join(target, 'gradle.properties');
-  fileUtils.setPlaceholder(gradleFile, 'Author', options.author);
-  fileUtils.setPlaceholder(gradleFile, 'ModNamespace', options.forge.namespace);
-  fileUtils.setPlaceholder(gradleFile, 'ModId', options.id);
-  fileUtils.setPlaceholder(gradleFile, 'ModName', options.name);
-  fileUtils.setPlaceholder(gradleFile, 'VendorName', options.forge.vendorName);
+  console.log('Handle gradle.properties file ...');
+  const gradleFile = 'gradle.properties';
+  fileUtils.setPlaceholder(target, gradleFile, 'Author', options.author);
+  fileUtils.setPlaceholder(
+    target,
+    gradleFile,
+    'ModNamespace',
+    options.forge.namespace
+  );
+  fileUtils.setPlaceholder(target, gradleFile, 'ModId', options.id);
+  fileUtils.setPlaceholder(target, gradleFile, 'ModName', options.name);
+  fileUtils.setPlaceholder(
+    target,
+    gradleFile,
+    'VendorName',
+    options.forge.vendorName
+  );
 
   // Resources files
-  const resourceFiles = path.join(target, 'src', 'main', 'resources', '**');
-  fileUtils.setPlaceholder(resourceFiles, 'Author', options.author);
+  const resourceFiles = path.join(target, 'src', 'main', 'resources');
+  console.log('Handle resources files at', resourceFiles);
+  fileUtils.setPlaceholder(resourceFiles, '**', 'Author', options.author);
   fileUtils.setPlaceholder(
     resourceFiles,
+    '**',
     'ModDescription',
     options.forge.description
   );
-  fileUtils.setPlaceholder(resourceFiles, 'ModId', options.id);
-  fileUtils.setPlaceholder(resourceFiles, 'ModLicense', options.license);
-  fileUtils.setPlaceholder(resourceFiles, 'ModName', options.name);
+  fileUtils.setPlaceholder(resourceFiles, '**', 'ModId', options.id);
+  fileUtils.setPlaceholder(resourceFiles, '**', 'ModLicense', options.license);
+  fileUtils.setPlaceholder(resourceFiles, '**', 'ModName', options.name);
 
   // Source files
-  const sourceFiles = path.join(target, 'src', 'main', 'java', '**', '*.java');
+  const sourceFiles = path.join(target, 'src', 'main', 'java');
+  console.log('Handle sources files at', sourceFiles);
   fileUtils.setPlaceholder(
     sourceFiles,
+    '**/*.java',
     'ModClassName',
     options.forge.className
   );
-  fileUtils.setPlaceholder(sourceFiles, 'ModId', options.id);
-  fileUtils.setPlaceholder(sourceFiles, 'ModName', options.name);
+  fileUtils.setPlaceholder(sourceFiles, '**/*.java', 'ModId', options.id);
+  fileUtils.setPlaceholder(sourceFiles, '**/*.java', 'ModName', options.name);
   fileUtils.setPlaceholder(
     sourceFiles,
+    '**/*.java',
     'packageNamespace',
     options.forge.namespace
   );
