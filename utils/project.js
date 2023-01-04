@@ -124,6 +124,10 @@ const copyProjectTemplateFiles = (template, target) => {
     path.join(template, 'gradle.properties'),
     path.join(target, 'gradle.properties')
   );
+  fileUtils.copyFolderIfNotExists(
+    path.join(template, 'settings.gradle'),
+    path.join(target, 'settings.gradle')
+  );
   fileUtils.copyFileIfNotExists(
     path.join(template, 'gradlew'),
     path.join(target, 'gradlew')
@@ -250,6 +254,7 @@ const getProjectTemplate = (version) => {
     case '1.18':
     case '1.18.1':
     case '1.18.2':
+    case '1.19.2':
       return `${prefix}${version}`;
     default:
       return '';

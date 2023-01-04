@@ -14,7 +14,7 @@ enjoying development experience.
 For better performance and offline capability reasons it is recommended to use a
 local copy of the tools.
 
-This can be done inside a empty project folder and the following command:
+This can be done inside the project folder with the following command:
 `npx minecraft-forge-utils init`
 
 ## How to use the utils
