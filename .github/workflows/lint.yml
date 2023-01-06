@@ -14,12 +14,12 @@ jobs:
 
     steps:
     - name: Check out Git repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 'latest'
 
     - name: Install linters
       run: npm install --no-package-lock --no-optional eslint eslint-config-google eslint-config-prettier eslint-plugin-prettier prettier typescript @typescript-eslint/eslint-plugin@latest @typescript-eslint/parser

@@ -18,10 +18,10 @@ const debug = () => {
   console.log('minecraft-forge-utils:', args, '\n');
   console.log('Detected Language:', translationUtils.language);
   if (projectConfig) {
-    console.log('Project Config', projectConfig);
+    console.log('\nProject Config', projectConfig);
   }
-  console.log('Detected paths:', defaultPath);
-  console.log('Process Env:', process.env);
+  console.log('\nDetected paths:', defaultPath);
+  console.log('\nProcess Env:', process.env);
   console.log('Shared utils version:', utilsVersion);
   console.log('Version:', process.env.npm_package_version);
 };

@@ -1,6 +1,6 @@
 {
   "name": "minecraft-forge-utils",
-  "version": "2.5.0",
+  "version": "2.7.0",
   "description": "Collection of useful Minecraft Forge development related utilities.",
   "preferGlobal": true,
   "main": "index.js",
@@ -34,7 +34,7 @@
     "enquirer": "^2.3.6",
     "fs-extra": "^11.1.0",
     "ignore": "^5.2.4",
-    "minecraft-utils-shared": "^0.6.2"
+    "minecraft-utils-shared": "^0.7.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.48.0",
@@ -50,7 +50,7 @@
     "cli": "npm exec ./",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "npm exec ./ && npm exec ./ debug && npm exec ./ version",
+    "test": "npm run lint && npm exec ./ && npm exec ./ debug && npm exec ./ version",
     "sync": "git pull && git submodule init && git submodule update && npm install && npm update && npm prune && npm audit fix",
     "upgrade": "npm-upgrade && npm install && npm update && npm prune && npm audit fix --registry=https://registry.npmjs.org && npm run test"
   }

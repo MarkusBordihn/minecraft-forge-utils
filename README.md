@@ -81,25 +81,25 @@ over the minecraft-forge-utils otherwise these information are missing.
 
 The template engine provides the following basic placeholders:
 
-- ModId
-- packageNamespace
+- \[\[ --ModId-- ]]
+- \[\[ --packageNamespace-- ]]
 
 For items the following additional placeholders are provided:
 
-- ItemName
-- ITEM_NAME
-- item_name
-- ItemClassName
+- \[\[ --ItemName-- ]]
+- \[\[ --ITEM_NAME-- ]]
+- \[\[ --item_name-- ]]
+- \[\[ --ItemClassName-- ]]
 
 For blocks the following additional placeholders are provided:
 
-- BLOCKNANE
-- BLOCK_NAME
-- BlockName
-- blockName
-- block_name
-- blockname
-- BlockClassName
+- \[\[ --BLOCKNANE-- ]]
+- \[\[ --BLOCK_NAME-- ]]
+- \[\[ --BlockName-- ]]
+- \[\[ --blockName-- ]]
+- \[\[ --block_name-- ]]
+- \[\[ --blockname-- ]]
+- \[\[ --BlockClassName-- ]]
 
 #### Template commands
 
@@ -244,11 +244,11 @@ Data templates should be end with **.json**, a simple example looks like:
 }
 
 +++ minecraft/tags/blocks/mineable/pickaxe.json
-@@@ after:"\"values\":  [" @@@
+@@@ after:"values": [ @@@
     "[[ --ModId-- ]]:[[ --block_name-- ]]",
 
 +++ minecraft/tags/blocks/needs_iron_tool.json
-@@@ after:"\"values\":  [" @@@
+@@@ after:"values": [ @@@
     "[[ --ModId-- ]]:[[ --block_name-- ]]",
 ```
 
@@ -258,6 +258,132 @@ Mixed templates should be end with **.template**. The template engine will try
 it best to detect the correct paths based on the given information. But in some
 cases it could be that it's not recognize the correct path and you need to split
 the files for the specific use-case.
+
+Full example:
+
+```java
++++ block/ModBlocks.java
+@@@ after:@TemplateEntryPoint("Register Blocks") @@@
+
+  public static final RegistryObject<Block> [[ --BLOCK_NAME-- ]]_HALF_SLAP =
+      BLOCKS.register([[ --block_name-- ]]_half_slab", () -> new HalfSlabBlock(Blocks.[[ --BLOCK_NAME-- ]]_BLOCK));
+
++++ items/ModItems.java
+@@@ after:@TemplateEntryPoint("Register Block Items") @@@
+
+  public static final RegistryObject<Item> [[ --BLOCK_NAME-- ]]_HALF_SLAP =
+        ITEMS.register("[[ --block_name-- ]]_slab", () -> new BlockItem(ModBlocks.[[ --BLOCK_NAME-- ]]_HALF_SLAP.get(),
+            new Item.Properties().tab(MaterialElementsTab.TAB_PANEL_PLATES)));
+
++++ blockstates/[[ --block_name-- ]].json
+@@@ create @@@
+{
+  "variants": {
+    "face=floor": {
+      "model": "[[ --ModId-- ]]:block/half_slab/[[ --block_name-- ]]_half_slab"
+    },
+    "face=wall,facing=north": {
+      "model": "[[ --ModId-- ]]:block/half_slab/[[ --block_name-- ]]_half_slab",
+      "x": 270,
+      "y": 180
+    },
+    "face=wall,facing=east": {
+      "model": "[[ --ModId-- ]]:block/half_slab/[[ --block_name-- ]]_half_slab",
+      "x": 270,
+      "y": 270
+    },
+    "face=wall,facing=south": {
+      "model": "[[ --ModId-- ]]:block/half_slab/[[ --block_name-- ]]_half_slab",
+      "x": 270
+    },
+    "face=wall,facing=west": {
+      "model": "[[ --ModId-- ]]:block/half_slab/[[ --block_name-- ]]_half_slab",
+      "x": 270,
+      "y": 90
+    },
+    "face=ceiling": {
+      "model": "[[ --ModId-- ]]:block/half_slab/[[ --block_name-- ]]_half_slab",
+      "x": 180
+    }
+  }
+}
+
++++ models/block/half_slab/[[ --block_name-- ]]_half_slab.json
+@@@ create @@@
+{
+  "parent": "material_elements_panels_plates_slabs:block/template/half_slab",
+  "textures": {
+    "texture": "minecraft:block/[[ --block_name-- ]]_planks",
+    "particle": "minecraft:block/[[ --block_name-- ]]_planks"
+  }
+}
+
++++ models/items/[[ --block_name-- ]]_half_slab.json
+@@@ create @@@
+{
+  "parent": "[[ --ModId-- ]]:block/half_slab/[[ --block_name-- ]]_half_slab"
+}
+
++++ loot_tables/blocks/[[ --block_name-- ]].json
+@@@ create @@@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_name",
+              "source": "block_entity"
+            }
+          ],
+          "name": "[[ --ModId-- ]]:[[ --block_name-- ]]_half_slab"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}
+
++++ recipes/[[ --block_name-- ]]_from_[[ --block_name-- ]]_planks_by_stonecutter.json
+@@@ create @@@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "minecraft:[[ --block_name-- ]]_planks"
+  },
+  "result": "[[ --ModId-- ]]:[[ --block_name-- ]]_half_slab",
+  "count": 4
+}
+
+
++++ recipes/[[ --block_name-- ]]_from_[[ --block_name-- ]]_slab_by_stonecutter.json
+@@@ create @@@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "minecraft:[[ --block_name-- ]]_slab"
+  },
+  "result": "[[ --ModId-- ]]:[[ --block_name-- ]]_half_slab",
+  "count": 2
+}
+
++++ minecraft/tags/blocks/mineable/pickaxe.json
+@@@ after:"values": [ @@@
+    "[[ --ModId-- ]]:[[ --block_name-- ]]",
+
++++ minecraft/tags/blocks/needs_iron_tool.json
+@@@ after:"values": [ @@@
+    "[[ --ModId-- ]]:[[ --block_name-- ]]",
+```
 
 ## Disclaimer
 

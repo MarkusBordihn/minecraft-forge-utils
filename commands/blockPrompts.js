@@ -43,7 +43,7 @@ const newBlockTemplate = (type = 'custom', choices = [], variation = '') => {
       {
         name: 'namespace',
         message: 'Namespace',
-        initial: projectConfig.id || defaultConfig.item.config.namespace,
+        initial: projectConfig.forge.namespace,
       },
       {
         name: 'forge.className',
